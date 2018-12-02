@@ -10,11 +10,11 @@ proc hammingDistance(a, b: string): int =
     a.len - acc
 
 proc matchingChars(a: string, b: string): string =
-    var acc = newseq[char](a.len)
+    var acc = newStringOfCap(a.len)
     for i in 0..<a.len:
         if a[i] == b[i]:
             acc.add(a[i])
-    join(acc, "")
+    acc
 
 proc findAnswer(file: string): string =
     let ids = toSeq(file.lines)
@@ -22,10 +22,9 @@ proc findAnswer(file: string): string =
     for i in 0..<ids.len:
         for j in i+1..<ids.len:
             if hammingDistance(ids[i], ids[j]) == 1:
-                let expectedLength = ids[i].len - 1
                 return matchingChars(ids[i], ids[j])
     ""
 
 let input = os.commandLineParams()[0]
-echo "answer:"
-echo findanswer(input)
+echo ""
+echo "answer: " & findanswer(input)
