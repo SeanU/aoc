@@ -13,7 +13,7 @@ proc makeSlots(size: int): seq[seq[int]] =
 
 proc newFabric(size: int): Fabric = (size: size, slots: makeSlots(size))
 
-proc double(fabric: var Fabric): void =
+proc grow(fabric: var Fabric): void =
     let oldSize = fabric.size
     fabric.size = oldSize * 2
     echo "Growing fabric from $1 to $2" % [$oldSize, $fabric.size]
@@ -47,12 +47,15 @@ proc size(claim: Claim): int =
 
 proc makeFit(fabric: var Fabric, claim: Claim): void =
     while(claim.size >= fabric.size):
-        fabric.double()
+        fabric.grow()
 
-proc layClaim(claim: Claim, fabric: var Fabric): void =
+proc layClaim(claim: Claim, fabric: var Fabric): bool =
+    result = true
     for x in claim.x..<(claim.x + claim.width):
         for y in claim.y..<(claim.y + claim.height):
             inc(fabric.slots[x][y])
+            if fabric.slots[x][y] > 1:
+                result = false
 
 proc noOverlaps(claim: Claim, fabric: Fabric): bool =
     for x in claim.x..<(claim.x + claim.width):
@@ -61,21 +64,23 @@ proc noOverlaps(claim: Claim, fabric: Fabric): bool =
                 return false
     true
 
-proc findUniqueClaim(file: string, fabric: Fabric): int =
-    for line in file.lines:
-        let claim = parseClaim(line)
+proc findUniqueClaim(candidates: seq[Claim], fabric: Fabric): int =
+    echo "Examining $1 possible unique claims" % [$candidates.len]
+    for claim in candidates:
         if claim.noOverlaps(fabric):
             return claim.id
         
 proc findUniqueClaim(file: string): int =
-    var fabric = newFabric(1)
+    var fabric = newFabric(1024)
+    var possibleUniques: seq[Claim]
 
     for line in file.lines:
         let claim = parseClaim(line)
         makeFit(fabric, claim)
-        claim.layClaim(fabric)
+        if claim.layClaim(fabric):
+            possibleUniques.add(claim)
 
-    findUniqueClaim(file, fabric)
+    findUniqueClaim(possibleUniques, fabric)
 
 let input = commandLineParams()[0]
 echo "unique claim: $1" % [$findUniqueClaim(input)]
