@@ -18,9 +18,6 @@ type
         of sleep, wake: time: NapTime
     Nap = tuple[id: int, doze: NapTime, wake: NapTime]
 
-proc duration(nap: Nap): NapTime = nap.wake - nap.doze
-proc `$`(nap: Nap): string = "nap($1: $2-$3)" % [$nap.id, $nap.doze, $nap.wake]
-
 proc readLines(file: string): seq[LogLine] =
     for line in file.lines:
         let timeStr = line.substr(1, 16)
@@ -96,16 +93,6 @@ proc compileNapStats(file: string): TableRef[int, seq[Nap]] =
         if not result.hasKey(nap.id):
             result.add(nap.id, newSeq[Nap]())
         result[nap.id].add(nap)
-
-proc findSleepyGuard(stats: TableRef[int, seq[Nap]]): int =
-    var sleepiness: int
-    for pair in stats.pairs():
-        let (id, naps) = pair
-        let sleepTime = naps.map(duration).sum()
-        if sleepTime > sleepiness:
-            result = id
-            sleepiness = sleepTime
-    echo "Sleepy guard #$1 slept $2 minutes" % [$result, $sleepiness]
 
 proc findSleepiestMinuteFrequency(naps: seq[Nap]): (int, int) =
     var slots: array[60, int]
