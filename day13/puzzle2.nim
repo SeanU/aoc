@@ -29,14 +29,6 @@ proc parse(file: string): (Map, seq[Cart]) =
                     discard
     (map, carts)
 
-func forRank(carts: seq[Cart], rank: int): seq[Cart] =
-    carts.filterIt(it.position.y == rank)
-
-func addCarts(line: string, carts: seq[Cart]): string =
-    result = line
-    for cart in carts:
-        result[cart.position.x] = cart.heading
-
 func toVector(heading: char): Vector =
     case heading:
         of '<': (-1,0)
