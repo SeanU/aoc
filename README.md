@@ -1,4 +1,3 @@
-# aoc-2018
-2018 Advent of Code work
+# aoc-2022
+Advent of Code 
 
-Advent of Code done in Nim.
