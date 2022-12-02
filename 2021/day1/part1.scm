@@ -5,19 +5,17 @@
 
 (define count-greater
   (lambda (lines)
-    (letrec 
-        (
-            (values (filter integer? (map string->number lines)))
-            (loop
-                (lambda (lst acc)
-                    (match lst
-                        [(x y . rest) 
-                            (if (> y x)
-                                (loop (cdr lst) (+ acc 1))
-                                (loop (cdr lst) acc))]
-                        [else acc])))
-        )
-        (loop values 0))))
+          (letrec ((values (filter integer? (map string->number lines)))
+                   (loop
+                     (lambda (lst acc)
+                             (match lst
+                                    [(x y . rest) 
+                                     (if (> y x)
+                                       (loop (cdr lst) (+ acc 1))
+                                       (loop (cdr lst) acc))]
+                                    [else acc])))
+                   )
+            (loop values 0))))
 
-(let [(lines (call-with-input-file "day1/input.txt" read-lines))]
-    (print (count-greater lines)))
+(let [(lines (call-with-input-file "input.txt" read-lines))]
+  (print (count-greater lines)))
