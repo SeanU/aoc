@@ -19,10 +19,10 @@
 
 
 (define (shared-chars xs)
-  (define (find-shared-chars a b)
+  (define (find-shared-chars a b) ; returns all shared chars as a string
     (let [(haystack (string->char-set b))]
       (let loop [(needles (string->list a))
-                (acc '())]
+                 (acc '())]
         (match needles
           [() (list->string acc)]
           [(needle . rest) (if (char-set-contains? haystack needle)
